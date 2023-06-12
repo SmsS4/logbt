@@ -43,9 +43,7 @@ COLORS = [
 
 def random_color(text: str) -> str:
     color = (
-        "\u001b[38;5;"
-        + str(COLORS[zlib.adler32(text.encode()) % len(COLORS)])
-        + "m"
+        "\u001b[38;5;" + str(COLORS[zlib.adler32(text.encode()) % len(COLORS)]) + "m"
     )
     return f"{color}{text}{RESET}"
 

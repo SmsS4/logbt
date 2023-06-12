@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "logiri"
+name = "logbt"
 version = "0.1.0"
 description = ""
 authors = ["SmsS4 <smss.lite@gmail.com>"]
