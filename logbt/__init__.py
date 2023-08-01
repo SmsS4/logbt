@@ -54,16 +54,20 @@ def colorize(record):
     record["function"] = f'[{record["function"]}]'.ljust(10)
 
 
-loguru.logger.remove()
-logger = loguru.logger.patch(colorize)
+def config(level="INFO"):
+    splitter = " " * 3
+    logger.add(
+        sys.stdout,
+        colorize=True,
+        level=level,
+        format="SPLITTER[{time:YYYY-MM-DD HH:mm:ss}]"
+        "SPLITTER<level>{level}</level>"
+        "SPLITTER{module}"
+        "SPLITTER{function}"
+        "SPLITTER{message} :: ({file}:{line})".replace("SPLITTER", splitter),
+    )
 
-splitter = " " * 3
-logger.add(
-    sys.stdout,
-    colorize=True,
-    format="SPLITTER[{time:YYYY-MM-DD HH:mm:ss}]"
-    "SPLITTER<level>{level}</level>"
-    "SPLITTER{module}"
-    "SPLITTER{function}"
-    "SPLITTER{message} :: ({file}:{line})".replace("SPLITTER", splitter),
-)
+
+logger = loguru.logger
+logger.remove()
+logger = logger.patch(colorize)
