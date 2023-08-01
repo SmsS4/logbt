@@ -4,7 +4,7 @@ from logbt import config
 from logbt import inject_loguru_to_logging
 from logbt import logger
 
-config(level="INFO")
+config(level="INFO", show_function=False)
 
 
 def f():

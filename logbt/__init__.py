@@ -60,17 +60,25 @@ def colorize(record):
     record["function"] = f'[{record["function"]}]'.ljust(10)
 
 
-def config(level="INFO", splitter=" "):
+def config(
+    level="INFO",
+    splitter=" ",
+    show_function: bool = False,
+) -> None:
     splitter *= 3
+    format_list = [
+        "SPLITTER[{time:YYYY-MM-DD HH:mm:ss}]",
+        "SPLITTER<level>{level}</level>",
+        "SPLITTER{module}",
+    ]
+    if show_function:
+        format_list.append("SPLITTER{function}")
+    format_list.append("SPLITTER{message} :: ({file}:{line})")
     logger.add(
         sys.stdout,
         colorize=True,
         level=level,
-        format="SPLITTER[{time:YYYY-MM-DD HH:mm:ss}]"
-        "SPLITTER<level>{level}</level>"
-        "SPLITTER{module}"
-        "SPLITTER{function}"
-        "SPLITTER{message} :: ({file}:{line})".replace("SPLITTER", splitter),
+        format="".join(format_list).replace("SPLITTER", splitter),
     )
 
 
@@ -81,10 +89,13 @@ class InjectLoguruHandler(logging.Handler):
 
 def inject_loguru_to_logging(
     name: str,
+    remove_handlers: bool = True,
 ):
     handler = InjectLoguruHandler()
     handler.setLevel(logging.NOTSET)
     logging_logger = logging.getLogger(name)
+    if remove_handlers:
+        logging_logger.handlers.clear()
     logging_logger.addHandler(handler)
 
 

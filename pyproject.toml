@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logbt"
-version = "0.3.0"
+version = "0.4.0"
 description = ""
 authors = ["SmsS4 <smss.lite@gmail.com>"]
 readme = "README.md"
