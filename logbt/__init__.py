@@ -1,7 +1,6 @@
 import logging
 import sys
 import zlib
-from pprint import pprint
 
 import loguru
 
@@ -42,8 +41,15 @@ COLORS = [
 
 
 def random_color(text: str) -> str:
-    color = (
-        "\u001b[38;5;" + str(COLORS[zlib.adler32(text.encode()) % len(COLORS)]) + "m"
+    """
+    Gets random color based on text hash
+    """
+    color = "".join(
+        [
+            "\u001b[38;5;",
+            str(COLORS[zlib.adler32(text.encode()) % len(COLORS)]),
+            "m",
+        ]
     )
     return f"{color}{text}{RESET}"
 
@@ -54,8 +60,8 @@ def colorize(record):
     record["function"] = f'[{record["function"]}]'.ljust(10)
 
 
-def config(level="INFO"):
-    splitter = " " * 3
+def config(level="INFO", splitter=" "):
+    splitter *= 3
     logger.add(
         sys.stdout,
         colorize=True,
@@ -66,6 +72,20 @@ def config(level="INFO"):
         "SPLITTER{function}"
         "SPLITTER{message} :: ({file}:{line})".replace("SPLITTER", splitter),
     )
+
+
+class InjectLoguruHandler(logging.Handler):
+    def emit(self, record: logging.LogRecord) -> None:
+        logger.log(record.levelname, self.format(record))
+
+
+def inject_loguru_to_logging(
+    name: str,
+):
+    handler = InjectLoguruHandler()
+    handler.setLevel(logging.NOTSET)
+    logging_logger = logging.getLogger(name)
+    logging_logger.addHandler(handler)
 
 
 logger = loguru.logger
